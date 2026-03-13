@@ -49,12 +49,34 @@ Or clone this repo and copy the skill folder into your agent's skills directory.
     └── evals.json        # Test cases with assertions
 ```
 
-## Example
+## Example — Real interaction
 
-Generated a **LlamaFactory skill** from [hiyouga/LLaMA-Factory](https://github.com/hiyouga/LLaMA-Factory):
-- Covers installation, LoRA/QLoRA/DPO training, dataset prep, multi-GPU, deployment
-- Scored **22/22 (100%)** on all eval assertions
-- Baseline without skill: 21/22 (95.5%)
+**User prompt:**
+> @agent create a skill for using https://github.com/hiyouga/LLaMA-Factory
+
+**What the agent does:**
+1. Clones the repo, reads README + examples + source
+2. Detects: Python CLI tool, entry point `llamafactory-cli`
+3. Generates a complete skill covering LoRA, QLoRA, DPO, multimodal training, dataset prep, multi-GPU, deployment
+4. Runs 5 eval prompts (e.g. *"Fine-tune Qwen3-4B on 5000 samples with 24GB VRAM"*)
+5. Delivers the skill with benchmark results
+
+**User prompt:**
+> @agent I want to fine-tune Qwen3-4B on my custom dataset. I have 1 GPU with 24GB VRAM.
+
+**Agent (with generated skill loaded):** gives a complete YAML config, correct template, `llamafactory-cli train` command, VRAM estimate — all accurate and tool-specific.
+
+**Eval results:**
+
+| Test | With Skill | Baseline (no skill) |
+|------|-----------|---------------------|
+| LoRA SFT (24GB GPU) | 5/5 ✅ | 5/5 ✅ |
+| DPO Training | 5/5 ✅ | 5/5 ✅ |
+| Merge & Deploy | 4/4 ✅ | 4/4 ✅ |
+| Multimodal VLM | 4/4 ✅ | 4/4 ✅ |
+| 70B Distributed | 4/4 ✅ | 3/4 ⚠️ |
+
+**With skill: 22/22 (100%)** · Baseline: 21/22 (95.5%) — skill caught `FORCE_TORCHRUN=1`, a tool-specific detail the baseline missed.
 
 ## Included tools
 
